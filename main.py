@@ -1,46 +1,57 @@
 import numpy as np
-import cv2 
+import cv2
 import time
-cap=cv2.VideoCapture(0)#Read from the default web cam i.e why 0
 
-time.sleep(3) #for the system to sleep for 3 second before the webcam starts
-for i in range(30): 
-    retval,back=cap.read()
-back=np.flip(back,axis=1) #images captured is mirror image so we need to flip it again to get the original background amd axis=1 means laterally invert image
-cap=cv2.VideoCapture(0)  
+print("Starting Invisible Cloak...")
+print("Make sure your cloak (red cloth) is not visible to the camera.")
+print("Capturing background in 3 seconds...")
 
+cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print("Error: Could not open webcam.")
+    exit()
 
+time.sleep(3)
+background_captured = False
+for i in range(30):
+    retval, back = cap.read()
+    if retval:
+        background_captured = True
+back = np.flip(back, axis=1) if background_captured else None
 
-## detecting the red portion In each frame
+if not background_captured:
+    print("Error: Could not capture background.")
+    cap.release()
+    exit()
 
+print("Background captured. You can now use your cloak!")
 
-while (cap.isOpened()):  ##Read every Frame from the webcam, until the camera is open 
-    ret,img=cap.read()
-    if ret:
-        img=np.flip(img,axis=1)
-        
-        ##convert the color space from BGR to HSV because BGR  cant detect colour efficiently
-        hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
-        
-        ##Generat masks to detect red color
-        lower_red = np.array([0,120,70])
-        upper_red = np.array([10,255,255])
-        mask1 = cv2.inRange(hsv,lower_red,upper_red)
-        
-        lower_red = np.array([170,120,70])
-        upper_red = np.array([180,255,255])
-        mask2 = cv2.inRange(hsv,lower_red,upper_red)
-        mask1+=mask2
-        
-        ###Replacing the red portion with a mask image in each frame
-
-        mask = cv2.morphologyEx(mask1, cv2.MORPH_OPEN, np.ones((5,5),np.uint8))
-        img[np.where(mask==255)]=back[np.where(mask==255)]
-        
-         #Final output
-        cv2.imshow("Harry Potter's invisible secret revealed",img)
-    key = cv2.waitKey(1)
-    if key==ord("q"):
+while cap.isOpened():
+    ret, img = cap.read()
+    if not ret:
         break
+    img = np.flip(img, axis=1)
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    # Detect red color in HSV
+    lower_red1 = np.array([0, 120, 70])
+    upper_red1 = np.array([10, 255, 255])
+    mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+
+    lower_red2 = np.array([170, 120, 70])
+    upper_red2 = np.array([180, 255, 255])
+    mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+    mask = mask1 + mask2
+
+    # Remove noise from mask
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+
+    # Replace cloak area with background
+    img[np.where(mask == 255)] = back[np.where(mask == 255)]
+
+    cv2.imshow("Harry Potter's Invisible Cloak", img)
+    if cv2.waitKey(1) == ord("q"):
+        break
+
 cap.release()
 cv2.destroyAllWindows()
