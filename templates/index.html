@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invisible Cloak Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard">
+        <header>
+            <h1>Invisible Cloak Dashboard</h1>
+            <p>Real-time computer vision application for invisibility effect</p>
+        </header>
+
+        <main>
+            <section class="video-section">
+                <h2>Live Video Feed</h2>
+                <div class="video-container" id="videoContainer">
+                    <div class="camera-placeholder" id="cameraPlaceholder">
+                        <div class="camera-icon"></div>
+                        <h3>Camera Not Connected</h3>
+                        <p>Please check your camera connection and permissions</p>
+                    </div>
+                    <img id="videoFeed" src="{{ url_for('video_feed') }}" alt="Video Feed" style="display: none;" loading="lazy">
+                </div>
+                <div class="fps-display">
+                    <span>FPS:</span> <span class="fps-value" id="fpsCounter">0</span>
+                </div>
+            </section>
+
+            <section class="controls-section">
+                <h2>Controls</h2>
+                
+                <div class="control-group">
+                    <label for="colorSelect">Cloak Color</label>
+                    <select id="colorSelect" onchange="changeColor()">
+                        <option value="red">Red (Classic)</option>
+                        <option value="blue">Blue</option>
+                        <option value="green">Green</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <button class="primary" onclick="startVideo()" title="Start/Restart video feed">
+                        Start Video
+                    </button>
+                    <button class="danger" onclick="stopVideo()" title="Stop video feed">
+                        Stop Video
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button class="secondary" onclick="takeSnapshot()" title="Capture current frame">
+                        Take Snapshot
+                    </button>
+                </div>
+
+                <div class="status" id="statusContainer">
+                    <p id="statusMessage">Status: Initializing camera...</p>
+                </div>
+                
+                <div class="tips">
+                    <h4>Keyboard Shortcuts</h4>
+                    <ul>
+                        <li><kbd>Space</kbd> - Start/restart video</li>
+                        <li><kbd>Ctrl+S</kbd> - Take snapshot</li>
+                        <li><kbd>Esc</kbd> - Stop video</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+
+</html>

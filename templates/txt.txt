@@ -1,0 +1,8 @@
+Invisible-Cloak-Python/
+├── templates/
+│   └── index.html
+├── static/
+│   ├── dashboard.css
+│   └── dashboard.js
+├── main.py
+└── app.py (Flask app)
